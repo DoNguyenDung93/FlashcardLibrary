@@ -37,7 +37,7 @@ namespace FlashcardLibrary.Migrations
 
                     b.HasKey("ObjectID");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("FlashcardLibrary.Data.Flashcard", b =>
@@ -60,7 +60,7 @@ namespace FlashcardLibrary.Migrations
 
                     b.HasIndex("CategoryObjectID");
 
-                    b.ToTable("Flashcards");
+                    b.ToTable("Flashcard", (string)null);
                 });
 
             modelBuilder.Entity("FlashcardLibrary.Data.Flashcard", b =>
