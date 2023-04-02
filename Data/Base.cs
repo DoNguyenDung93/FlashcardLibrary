@@ -11,5 +11,7 @@ namespace FlashcardLibrary.Data
         [Required]
         public string ObjectName { get; set; } = string.Empty;
         public int IsDeleted { get; set; }
+        public DateTime CreatedDateTime { get; set; }
+        public DateTime UpdatedDateTime { get; set; }
     }
 }
