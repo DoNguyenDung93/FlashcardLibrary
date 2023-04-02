@@ -1,9 +1,32 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Flashcard Library</h1>
 
-Welcome to your new app.
+<p>Welcome to your personal Flashcard Library. To begin, type the word you are looking for in the search box.</p>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+<input id="input_Search" type="text" @bind="searchTerm" />
+<button id="btn_Search" @onclick="btn_Search_OnClick">Search</button>
+
+<ul>
+    @foreach (var card in flashcards)
+    {
+        <li>@card.ObjectName</li>
+    }
+</ul>
+
+@code {
+    private string searchTerm = string.Empty;
+    private List<Flashcard> flashcards = new();
+
+    private void btn_Search_OnClick(EventArgs e)
+    {
+        // call dictionary API to get the JSON result
+
+        // create a flashcard and assign it to the default category
+        Flashcard flashcard = new Flashcard(searchTerm);
+        flashcards.Add(flashcard);
+    }
+}
