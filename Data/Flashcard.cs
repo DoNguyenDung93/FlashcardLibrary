@@ -7,6 +7,8 @@
             this.ObjectName = ObjectName;
             this.Attachments = new();
         }
+        public Guid? CategoryID { get; set; }
+        public Category? Category { get; set; }
 
         public List<Attachment> Attachments { get; set; }
         public List<Attachment> Meanings { get => GetAttachments((int)AttachmentTypeEnum.Meaning); }

@@ -2,10 +2,12 @@
 {
     public class Attachment : Base
     {
-        public Attachment(int type) 
+        public Attachment(int attachmentType) 
         {
-            this.AttachmentType = type;
+            this.AttachmentType = attachmentType;
         }
+        public Guid? FlashcardID { get; set; }
+        public Flashcard? Flashcard { get; set; }
 
         public int AttachmentType { get; set; }
         public string? Example { get; set; }

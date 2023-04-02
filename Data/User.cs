@@ -2,9 +2,9 @@
 {
     public class User : Base
     {
-        public User(string username, string password) 
+        public User(string objectName, string password) 
         {
-            this.ObjectName = username;
+            this.ObjectName = objectName;
             this.Password = password;
         }
         public string Password { get; set; }
