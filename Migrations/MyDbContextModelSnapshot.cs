@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FlashcardLibrary.Migrations
 {
-    [DbContext(typeof(MyDbContext))]
+    [DbContext(typeof(FlashcardContext))]
     partial class MyDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

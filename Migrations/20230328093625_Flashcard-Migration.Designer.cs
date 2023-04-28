@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FlashcardLibrary.Migrations
 {
-    [DbContext(typeof(MyDbContext))]
+    [DbContext(typeof(FlashcardContext))]
     [Migration("20230328093625_Flashcard-Migration")]
     partial class FlashcardMigration
     {
