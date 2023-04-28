@@ -13,5 +13,13 @@ namespace FlashcardLibrary.Data
         public int IsDeleted { get; set; }
         public DateTime CreatedDateTime { get; set; }
         public DateTime UpdatedDateTime { get; set; }
+
+        public void Save()
+        {
+            if (CreatedDateTime == DateTime.MinValue)
+                CreatedDateTime = DateTime.Now;
+
+            UpdatedDateTime = DateTime.Now;
+        }
     }
 }
