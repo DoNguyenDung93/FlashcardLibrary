@@ -19,14 +19,33 @@
 
 @code {
     private string searchTerm = string.Empty;
-    private List<Flashcard> flashcards = new();
+    private List<Flashcard> flashcards
+    {
+        get
+        {
+            var context = new FlashcardContext();
+            return context.Flashcard.ToList();
+        }
+    }
 
     private void btn_Search_OnClick(EventArgs e)
     {
         // call dictionary API to get the JSON result
 
+
+        // check duplicate
+        if (flashcards.Find(x => x.ObjectName.ToLower() == searchTerm.ToLower()) != null)
+        {
+            
+        }
+
         // create a flashcard and assign it to the default category
-        Flashcard flashcard = new Flashcard(searchTerm);
-        flashcards.Add(flashcard);
+        using (var context = new FlashcardContext())
+        {
+            Flashcard flashcard = new Flashcard(searchTerm);
+            flashcard.Save();
+            context.Flashcard.Add(flashcard);
+            context.SaveChanges();
+        }
     }
 }
