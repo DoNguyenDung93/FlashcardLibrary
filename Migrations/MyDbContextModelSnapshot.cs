@@ -22,10 +22,34 @@ namespace FlashcardLibrary.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FlashcardLibrary.Data.Category", b =>
+            modelBuilder.Entity("FlashcardLibrary.Data.Attachment", b =>
                 {
                     b.Property<Guid>("ObjectID")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("AttachmentType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Example")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("FlashcardID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FlashcardObjectID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FlashcardObjectID1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FlashcardObjectID2")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FlashcardObjectID3")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("IsDeleted")
@@ -34,6 +58,43 @@ namespace FlashcardLibrary.Migrations
                     b.Property<string>("ObjectName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ObjectID");
+
+                    b.HasIndex("FlashcardID");
+
+                    b.HasIndex("FlashcardObjectID");
+
+                    b.HasIndex("FlashcardObjectID1");
+
+                    b.HasIndex("FlashcardObjectID2");
+
+                    b.HasIndex("FlashcardObjectID3");
+
+                    b.ToTable("Attachment", (string)null);
+                });
+
+            modelBuilder.Entity("FlashcardLibrary.Data.Category", b =>
+                {
+                    b.Property<Guid>("ObjectID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IsDeleted")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ObjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDateTime")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("ObjectID");
 
@@ -46,8 +107,11 @@ namespace FlashcardLibrary.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CategoryObjectID")
+                    b.Property<Guid?>("CategoryID")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("IsDeleted")
                         .HasColumnType("int");
@@ -56,23 +120,94 @@ namespace FlashcardLibrary.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("UpdatedDateTime")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("ObjectID");
 
-                    b.HasIndex("CategoryObjectID");
+                    b.HasIndex("CategoryID");
 
                     b.ToTable("Flashcard", (string)null);
                 });
 
+            modelBuilder.Entity("FlashcardLibrary.Data.User", b =>
+                {
+                    b.Property<Guid>("ObjectID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IsDeleted")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ObjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ObjectID");
+
+                    b.ToTable("User", (string)null);
+                });
+
+            modelBuilder.Entity("FlashcardLibrary.Data.Attachment", b =>
+                {
+                    b.HasOne("FlashcardLibrary.Data.Flashcard", "Flashcard")
+                        .WithMany("Attachments")
+                        .HasForeignKey("FlashcardID");
+
+                    b.HasOne("FlashcardLibrary.Data.Flashcard", null)
+                        .WithMany("Antonyms")
+                        .HasForeignKey("FlashcardObjectID");
+
+                    b.HasOne("FlashcardLibrary.Data.Flashcard", null)
+                        .WithMany("Meanings")
+                        .HasForeignKey("FlashcardObjectID1");
+
+                    b.HasOne("FlashcardLibrary.Data.Flashcard", null)
+                        .WithMany("Pronunciations")
+                        .HasForeignKey("FlashcardObjectID2");
+
+                    b.HasOne("FlashcardLibrary.Data.Flashcard", null)
+                        .WithMany("Synonyms")
+                        .HasForeignKey("FlashcardObjectID3");
+
+                    b.Navigation("Flashcard");
+                });
+
             modelBuilder.Entity("FlashcardLibrary.Data.Flashcard", b =>
                 {
-                    b.HasOne("FlashcardLibrary.Data.Category", null)
+                    b.HasOne("FlashcardLibrary.Data.Category", "Category")
                         .WithMany("Flashcards")
-                        .HasForeignKey("CategoryObjectID");
+                        .HasForeignKey("CategoryID");
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("FlashcardLibrary.Data.Category", b =>
                 {
                     b.Navigation("Flashcards");
+                });
+
+            modelBuilder.Entity("FlashcardLibrary.Data.Flashcard", b =>
+                {
+                    b.Navigation("Antonyms");
+
+                    b.Navigation("Attachments");
+
+                    b.Navigation("Meanings");
+
+                    b.Navigation("Pronunciations");
+
+                    b.Navigation("Synonyms");
                 });
 #pragma warning restore 612, 618
         }
