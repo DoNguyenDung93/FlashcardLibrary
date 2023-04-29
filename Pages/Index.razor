@@ -6,17 +6,26 @@
 
 <p>Welcome to your personal Flashcard Library. To begin, type the word you are looking for in the search box.</p>
 
+<p>
+    <input id="input_Search" type="text" @bind="searchTerm" />
+    <button id="btn_Search" @onclick="btn_Search_OnClick">Search</button>
+</p>
 
-<input id="input_Search" type="text" @bind="searchTerm" />
-<button id="btn_Search" @onclick="btn_Search_OnClick">Search</button>
+<p>
+    <ul id="ul_flashcards">
+        @foreach (var card in flashcards)
+        {
+            <li>
+                <input id="input_Checkbox" type="checkbox" @bind="card.IsDeletedBool" />
+                @card.ObjectName
+            </li>
+        }
+    </ul>
+</p>
 
-<ul>
-    @foreach (var card in flashcards)
-    {
-        <li>@card.ObjectName</li>
-    }
-</ul>
-
+<p>
+    <button id="btn_Delete" @onclick="btn_Delete_OnClick">Delete</button>
+</p>
 @code {
     private string searchTerm = string.Empty;
     private List<Flashcard> flashcards
@@ -24,7 +33,13 @@
         get
         {
             var context = new FlashcardContext();
-            return context.Flashcard.ToList();
+            {
+                if (!String.IsNullOrEmpty(searchTerm))
+                    return context.Flashcard.Where(x => x.IsDeleted == GlobalVariable.GlobalNoFlag && x.ObjectName.ToLower() == searchTerm.ToLower()).ToList();
+                else
+                    return context.Flashcard.Where(x => x.IsDeleted == GlobalVariable.GlobalNoFlag).ToList();
+            }
+            
         }
     }
 
@@ -36,7 +51,7 @@
         // check duplicate
         if (flashcards.Find(x => x.ObjectName.ToLower() == searchTerm.ToLower()) != null)
         {
-            
+            return;
         }
 
         // create a flashcard and assign it to the default category
@@ -47,5 +62,16 @@
             context.Flashcard.Add(flashcard);
             context.SaveChanges();
         }
+    }
+
+    private void btn_Delete_OnClick(EventArgs e)
+    {
+        // set IsDeleted of selected Flashcards to 1
+
+    }
+
+    private void input_SetDeleted(EventArgs e)
+    {
+        
     }
 }
