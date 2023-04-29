@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FlashcardLibrary.Data
 {
@@ -20,6 +20,19 @@ namespace FlashcardLibrary.Data
                 CreatedDateTime = DateTime.Now;
 
             UpdatedDateTime = DateTime.Now;
+        }
+
+        [NotMapped]
+        public bool IsDeletedBool
+        {
+            get => IsDeleted == GlobalVariable.GlobalYesFlag;
+            set 
+            {    
+                if (value == true)
+                    IsDeleted = GlobalVariable.GlobalYesFlag;
+                else
+                    IsDeleted = GlobalVariable.GlobalNoFlag;
+            }
         }
     }
 }
