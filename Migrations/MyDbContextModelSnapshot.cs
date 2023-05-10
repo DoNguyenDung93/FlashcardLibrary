@@ -17,7 +17,7 @@ namespace FlashcardLibrary.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.4")
+                .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -34,9 +34,6 @@ namespace FlashcardLibrary.Migrations
                     b.Property<DateTime>("CreatedDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Example")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("FlashcardID")
                         .HasColumnType("uniqueidentifier");
 
@@ -52,12 +49,18 @@ namespace FlashcardLibrary.Migrations
                     b.Property<Guid?>("FlashcardObjectID3")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("FlashcardObjectID4")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("IsDeleted")
                         .HasColumnType("int");
 
                     b.Property<string>("ObjectName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedDateTime")
                         .HasColumnType("datetime2");
@@ -73,6 +76,8 @@ namespace FlashcardLibrary.Migrations
                     b.HasIndex("FlashcardObjectID2");
 
                     b.HasIndex("FlashcardObjectID3");
+
+                    b.HasIndex("FlashcardObjectID4");
 
                     b.ToTable("Attachment", (string)null);
                 });
@@ -169,16 +174,20 @@ namespace FlashcardLibrary.Migrations
                         .HasForeignKey("FlashcardObjectID");
 
                     b.HasOne("FlashcardLibrary.Data.Flashcard", null)
-                        .WithMany("Meanings")
+                        .WithMany("Examples")
                         .HasForeignKey("FlashcardObjectID1");
 
                     b.HasOne("FlashcardLibrary.Data.Flashcard", null)
-                        .WithMany("Pronunciations")
+                        .WithMany("Meanings")
                         .HasForeignKey("FlashcardObjectID2");
 
                     b.HasOne("FlashcardLibrary.Data.Flashcard", null)
-                        .WithMany("Synonyms")
+                        .WithMany("Pronunciations")
                         .HasForeignKey("FlashcardObjectID3");
+
+                    b.HasOne("FlashcardLibrary.Data.Flashcard", null)
+                        .WithMany("Synonyms")
+                        .HasForeignKey("FlashcardObjectID4");
 
                     b.Navigation("Flashcard");
                 });
@@ -202,6 +211,8 @@ namespace FlashcardLibrary.Migrations
                     b.Navigation("Antonyms");
 
                     b.Navigation("Attachments");
+
+                    b.Navigation("Examples");
 
                     b.Navigation("Meanings");
 

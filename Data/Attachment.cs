@@ -10,7 +10,7 @@
         public Flashcard? Flashcard { get; set; }
 
         public int AttachmentType { get; set; }
-        public string? Example { get; set; }
+        public int Order {get; set; }
     }
 
     public enum AttachmentTypeEnum
@@ -19,5 +19,6 @@
         Pronunciation = 1,
         Synonym = 2,
         Antonym = 3,
+        Example = 4,
     }
 }
