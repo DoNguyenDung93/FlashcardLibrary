@@ -2,23 +2,14 @@
 {
     public class Attachment : Base
     {
-        public Attachment(int attachmentType) 
-        {
-            this.AttachmentType = attachmentType;
-        }
+        public Attachment() {}
         public Guid? FlashcardID { get; set; }
         public Flashcard? Flashcard { get; set; }
-
-        public int AttachmentType { get; set; }
-        public int Order {get; set; }
-    }
-
-    public enum AttachmentTypeEnum
-    {
-        Meaning = 0,
-        Pronunciation = 1,
-        Synonym = 2,
-        Antonym = 3,
-        Example = 4,
+        public int Order { get; set; }
+        public string? Definition { get; set; }
+        public string? Pronunciation { get; set; }
+        public string? Synonym { get; set; }
+        public string? Example { get; set; }
+        public byte[]? Sound { get; set; }
     }
 }

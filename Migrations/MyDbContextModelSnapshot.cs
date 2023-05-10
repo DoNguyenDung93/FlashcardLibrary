@@ -28,28 +28,16 @@ namespace FlashcardLibrary.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AttachmentType")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedDateTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Definition")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Example")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("FlashcardID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FlashcardObjectID")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FlashcardObjectID1")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FlashcardObjectID2")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FlashcardObjectID3")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FlashcardObjectID4")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("IsDeleted")
@@ -62,22 +50,21 @@ namespace FlashcardLibrary.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
+                    b.Property<string>("Pronunciation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Sound")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Synonym")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("UpdatedDateTime")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ObjectID");
 
                     b.HasIndex("FlashcardID");
-
-                    b.HasIndex("FlashcardObjectID");
-
-                    b.HasIndex("FlashcardObjectID1");
-
-                    b.HasIndex("FlashcardObjectID2");
-
-                    b.HasIndex("FlashcardObjectID3");
-
-                    b.HasIndex("FlashcardObjectID4");
 
                     b.ToTable("Attachment", (string)null);
                 });
@@ -169,26 +156,6 @@ namespace FlashcardLibrary.Migrations
                         .WithMany("Attachments")
                         .HasForeignKey("FlashcardID");
 
-                    b.HasOne("FlashcardLibrary.Data.Flashcard", null)
-                        .WithMany("Antonyms")
-                        .HasForeignKey("FlashcardObjectID");
-
-                    b.HasOne("FlashcardLibrary.Data.Flashcard", null)
-                        .WithMany("Examples")
-                        .HasForeignKey("FlashcardObjectID1");
-
-                    b.HasOne("FlashcardLibrary.Data.Flashcard", null)
-                        .WithMany("Meanings")
-                        .HasForeignKey("FlashcardObjectID2");
-
-                    b.HasOne("FlashcardLibrary.Data.Flashcard", null)
-                        .WithMany("Pronunciations")
-                        .HasForeignKey("FlashcardObjectID3");
-
-                    b.HasOne("FlashcardLibrary.Data.Flashcard", null)
-                        .WithMany("Synonyms")
-                        .HasForeignKey("FlashcardObjectID4");
-
                     b.Navigation("Flashcard");
                 });
 
@@ -208,17 +175,7 @@ namespace FlashcardLibrary.Migrations
 
             modelBuilder.Entity("FlashcardLibrary.Data.Flashcard", b =>
                 {
-                    b.Navigation("Antonyms");
-
                     b.Navigation("Attachments");
-
-                    b.Navigation("Examples");
-
-                    b.Navigation("Meanings");
-
-                    b.Navigation("Pronunciations");
-
-                    b.Navigation("Synonyms");
                 });
 #pragma warning restore 612, 618
         }
