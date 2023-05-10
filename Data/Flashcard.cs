@@ -1,4 +1,7 @@
-﻿namespace FlashcardLibrary.Data
+﻿using Microsoft.Extensions.Configuration;
+using System.Net.Http;
+
+namespace FlashcardLibrary.Data
 {
     public class Flashcard : Base
     {
@@ -14,13 +17,39 @@
         public List<Attachment>? Pronunciations { get => GetAttachments((int)AttachmentTypeEnum.Pronunciation); }
         public List<Attachment>? Synonyms { get => GetAttachments((int)AttachmentTypeEnum.Synonym); }
         public List<Attachment>? Antonyms { get => GetAttachments((int)AttachmentTypeEnum.Antonym); }
+
         
+
         private List<Attachment>? GetAttachments(int type)
         {
             if (Attachments != null) {
                 return Attachments.FindAll(x => x.AttachmentType == type).ToList();
             }
             return null;
+        }
+
+        public static async void GetFlashCard(string searchTerm, bool isUsingDefaultAPI, Flashcard flashcard)
+        {
+            string dictionaryURL = GetAPIURL(searchTerm, isUsingDefaultAPI);
+
+            // TODO: do API call to return the flashcard.
+            var responseString = await GlobalVariable.client.GetStringAsync(dictionaryURL);
+        }
+
+        private static string GetAPIURL(string searchTerm, bool isUsingDefaultAPI)
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            var url = isUsingDefaultAPI ? configuration.GetSection("DefaultAPI").GetValue<String>("URL") : configuration.GetSection("MedicalAPI").GetValue<String>("URL");
+            var key = isUsingDefaultAPI ? configuration.GetSection("DefaultAPI").GetValue<String>("Key") : configuration.GetSection("MedicalAPI").GetValue<String>("Key");
+
+            url ??= string.Empty;
+            key ??= string.Empty;
+
+            return String.Concat(url, "/", searchTerm, "?key=", key);
         }
     }
 }

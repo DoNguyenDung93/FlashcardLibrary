@@ -39,14 +39,15 @@
                 else
                     return context.Flashcard.Where(x => x.IsDeleted == GlobalVariable.GlobalNoFlag).ToList();
             }
-            
+
         }
     }
 
     private void btn_Search_OnClick(EventArgs e)
     {
         // call dictionary API to get the JSON result
-
+        Flashcard flashcard = new(searchTerm);
+        Flashcard.GetFlashCard(searchTerm, true, flashcard);
 
         // check duplicate
         if (flashcards.Find(x => x.ObjectName.ToLower() == searchTerm.ToLower()) != null)
@@ -57,7 +58,6 @@
         // create a flashcard and assign it to the default category
         using (var context = new FlashcardContext())
         {
-            Flashcard flashcard = new Flashcard(searchTerm);
             flashcard.Save();
             context.Flashcard.Add(flashcard);
             context.SaveChanges();
