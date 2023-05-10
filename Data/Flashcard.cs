@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using System.Net.Http;
 
 namespace FlashcardLibrary.Data
@@ -17,8 +18,7 @@ namespace FlashcardLibrary.Data
         public List<Attachment>? Pronunciations { get => GetAttachments((int)AttachmentTypeEnum.Pronunciation); }
         public List<Attachment>? Synonyms { get => GetAttachments((int)AttachmentTypeEnum.Synonym); }
         public List<Attachment>? Antonyms { get => GetAttachments((int)AttachmentTypeEnum.Antonym); }
-
-        
+        public List<Attachment>? Examples { get => GetAttachments((int)AttachmentTypeEnum.Example); }
 
         private List<Attachment>? GetAttachments(int type)
         {
@@ -34,6 +34,11 @@ namespace FlashcardLibrary.Data
 
             // TODO: do API call to return the flashcard.
             var responseString = await GlobalVariable.client.GetStringAsync(dictionaryURL);
+            dynamic responseArray = JArray.Parse(responseString);
+            foreach (var item in responseArray)
+            {
+                // Deserialize JSON to flashcard
+            }
         }
 
         private static string GetAPIURL(string searchTerm, bool isUsingDefaultAPI)
