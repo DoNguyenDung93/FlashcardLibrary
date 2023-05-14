@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
+using System.Text;
 
 namespace FlashcardLibrary.Data
 {
@@ -9,36 +10,41 @@ namespace FlashcardLibrary.Data
         public Flashcard(string ObjectName)
         {
             this.ObjectName = ObjectName;
+            Attachments ??= new List<Attachment>();
         }
         public Guid? CategoryID { get; set; }
         public Category? Category { get; set; }
 
-        public List<Attachment>? Attachments { get; set; }
-        public List<Attachment>? Meanings { get => GetAttachments((int)AttachmentTypeEnum.Meaning); }
-        public List<Attachment>? Pronunciations { get => GetAttachments((int)AttachmentTypeEnum.Pronunciation); }
-        public List<Attachment>? Synonyms { get => GetAttachments((int)AttachmentTypeEnum.Synonym); }
-        public List<Attachment>? Antonyms { get => GetAttachments((int)AttachmentTypeEnum.Antonym); }
-        public List<Attachment>? Examples { get => GetAttachments((int)AttachmentTypeEnum.Example); }
+        public List<Attachment> Attachments { get; set; }
 
-        private List<Attachment>? GetAttachments(int type)
+        public static async void GetFlashCard(bool isUsingDefaultAPI, Flashcard flashcard, List<Flashcard> existingFlashcards)
         {
-            if (Attachments != null) {
-                return Attachments.FindAll(x => x.AttachmentType == type).ToList();
+            if (existingFlashcards.Find(x => x.ObjectName == flashcard.ObjectName) != null)
+            {
+                return;
             }
-            return null;
-        }
+            string dictionaryURL = GetAPIURL(flashcard.ObjectName, isUsingDefaultAPI);
 
-        public static async void GetFlashCard(string searchTerm, bool isUsingDefaultAPI, Flashcard flashcard)
-        {
-            string dictionaryURL = GetAPIURL(searchTerm, isUsingDefaultAPI);
-
-            // TODO: do API call to return the flashcard.
+            // T API call to return the flashcard.
             var responseString = await GlobalVariable.client.GetStringAsync(dictionaryURL);
             dynamic responseArray = JArray.Parse(responseString);
-            foreach (var item in responseArray)
+            int count = 1;
+            foreach (dynamic item in responseArray)
             {
-                // Deserialize JSON to flashcard
+                if (((String)item.meta.id).StartsWith(flashcard.ObjectName + ":")) {
+                    // Deserialize JSON to flashcard
+                    flashcard.Attachments.Add(GenerateFlashcardData(item, count++));
+                }
             }
+
+            using var context = new FlashcardContext();
+            foreach (Attachment att in flashcard.Attachments)
+            {
+                att.Save();
+            }
+            flashcard.Save();
+            context.Flashcard.Add(flashcard);
+            context.SaveChanges();
         }
 
         private static string GetAPIURL(string searchTerm, bool isUsingDefaultAPI)
@@ -56,6 +62,19 @@ namespace FlashcardLibrary.Data
 
             return String.Concat(url, "/", searchTerm, "?key=", key);
         }
+
+        private static Attachment GenerateFlashcardData(dynamic item, int order)
+        {
+            Attachment attachment = new()
+            {
+                Order = order,
+                Pronunciation = item.hwi != null && item.hwi.prs != null ? item.hwi.prs[0].mw : string.Empty,
+                Definition = String.Join(", ", item.shortdef),
+                //Sound = item.hwi != null && item.hwi.prs != null ? item.hwi.prs[0].sound.audio : string.Empty,
+            };
+            return attachment;
+        }
+
         public string DisplayData
         {
             get

@@ -24,22 +24,31 @@
 </p>
 
 <p>
-    <button id="btn_Delete" @onclick="btn_Delete_OnClick">Delete</button>
+    <button id="btn_Delete" @onclick="btn_Reset_OnClick">Reset</button>
 </p>
 @code {
     private string searchTerm = string.Empty;
+    private List<Flashcard>? _flashcards;
     private List<Flashcard> flashcards
     {
         get
         {
-            var context = new FlashcardContext();
+            if (_flashcards != null && _flashcards.Count > 0)
+                return _flashcards;
+            else
             {
-                if (!String.IsNullOrEmpty(searchTerm))
-                    return context.Flashcard.Where(x => x.IsDeleted == GlobalVariable.GlobalNoFlag && x.ObjectName.ToLower() == searchTerm.ToLower()).ToList();
-                else
-                    return context.Flashcard.Where(x => x.IsDeleted == GlobalVariable.GlobalNoFlag).ToList();
+                var context = new FlashcardContext();
+                {
+                    if (!String.IsNullOrEmpty(searchTerm))
+                        return context.Flashcard.Include(flashcard => flashcard.Attachments).Where(x => x.IsDeleted == GlobalVariable.GlobalNoFlag && x.ObjectName.ToLower() == searchTerm.ToLower()).ToList();
+                    else
+                        return context.Flashcard.Include(flashcard => flashcard.Attachments).Where(x => x.IsDeleted == GlobalVariable.GlobalNoFlag).ToList();
+                }
             }
-
+        } 
+        set
+        {
+            _flashcards = value;
         }
     }
 
@@ -47,31 +56,15 @@
     {
         // call dictionary API to get the JSON result
         Flashcard flashcard = new(searchTerm);
-        Flashcard.GetFlashCard(searchTerm, true, flashcard);
+        Flashcard.GetFlashCard(true, flashcard, flashcards);
 
-        // check duplicate
-        if (flashcards.Find(x => x.ObjectName.ToLower() == searchTerm.ToLower()) != null)
-        {
-            return;
-        }
-
-        // create a flashcard and assign it to the default category
-        using (var context = new FlashcardContext())
-        {
-            flashcard.Save();
-            context.Flashcard.Add(flashcard);
-            context.SaveChanges();
-        }
+        flashcards.Add(flashcard);
     }
 
-    private void btn_Delete_OnClick(EventArgs e)
+    private void btn_Reset_OnClick(EventArgs e)
     {
-        // set IsDeleted of selected Flashcards to 1
-
+        searchTerm = string.Empty;
+        _flashcards?.Clear();
     }
 
-    private void input_SetDeleted(EventArgs e)
-    {
-        
-    }
 }
