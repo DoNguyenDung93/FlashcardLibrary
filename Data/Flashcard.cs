@@ -31,7 +31,7 @@ namespace FlashcardLibrary.Data
             int count = 1;
             foreach (dynamic item in responseArray)
             {
-                if (((String)item.meta.id).StartsWith(flashcard.ObjectName + ":")) {
+                if (((String)item.meta.id).StartsWith(flashcard.ObjectName + ":") && item.shortdef != null) {
                     // Deserialize JSON to flashcard
                     flashcard.Attachments.Add(GenerateFlashcardData(item, count++));
                 }
