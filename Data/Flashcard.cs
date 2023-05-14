@@ -56,5 +56,29 @@ namespace FlashcardLibrary.Data
 
             return String.Concat(url, "/", searchTerm, "?key=", key);
         }
+        public string DisplayData
+        {
+            get
+            {
+                StringBuilder result = new();
+
+                result.Append(this.ObjectName);
+                result.Append(Environment.NewLine);
+
+                foreach (Attachment attachment in this.Attachments)
+                {
+                    result.Append(attachment.Order);
+                    result.Append(' ');
+                    result.Append('[');
+                    result.Append(attachment.Pronunciation);
+                    result.Append(']');
+                    result.Append(": ");
+                    result.Append(attachment.Definition);
+                    result.Append(Environment.NewLine);
+                }
+
+                return result.ToString();
+            }
+        }
     }
 }
