@@ -17,13 +17,16 @@ namespace FlashcardLibrary.Data
 
         public List<Attachment> Attachments { get; set; }
 
-        public static async void GetFlashCard(bool isUsingDefaultAPI, Flashcard flashcard, List<Flashcard> existingFlashcards)
+        public static async Task<Flashcard> GetFlashCard(bool isUsingDefaultAPI, string searchTerm)
         {
-            if (existingFlashcards.Find(x => x.ObjectName == flashcard.ObjectName) != null)
+            using var context = new FlashcardContext();
+            List<Flashcard> existingFlashcards = context.Flashcard.ToList();
+            Flashcard existingCard = existingFlashcards.Find(x => x.ObjectName == searchTerm) ?? new(searchTerm);
+            if (existingFlashcards.Find(x => x.ObjectName == searchTerm) != null)
             {
-                return;
+                return existingCard;
             }
-            string dictionaryURL = GetAPIURL(flashcard.ObjectName, isUsingDefaultAPI);
+            string dictionaryURL = GetAPIURL(existingCard.ObjectName, isUsingDefaultAPI);
 
             // T API call to return the flashcard.
             var responseString = await GlobalVariable.client.GetStringAsync(dictionaryURL);
@@ -31,20 +34,22 @@ namespace FlashcardLibrary.Data
             int count = 1;
             foreach (dynamic item in responseArray)
             {
-                if (((String)item.meta.id).StartsWith(flashcard.ObjectName + ":") && item.shortdef != null) {
+                if ((((String)item.meta.id).StartsWith(existingCard.ObjectName + ":") || ((String)item.meta.id) == existingCard.ObjectName) && item.shortdef != null) {
                     // Deserialize JSON to flashcard
-                    flashcard.Attachments.Add(GenerateFlashcardData(item, count++));
+                    existingCard.Attachments.Add(GenerateFlashcardData(item, count++));
                 }
             }
 
-            using var context = new FlashcardContext();
-            foreach (Attachment att in flashcard.Attachments)
+            
+            foreach (Attachment att in existingCard.Attachments)
             {
                 att.Save();
             }
-            flashcard.Save();
-            context.Flashcard.Add(flashcard);
+            existingCard.Save();
+            context.Flashcard.Add(existingCard);
             context.SaveChanges();
+
+            return existingCard;
         }
 
         private static string GetAPIURL(string searchTerm, bool isUsingDefaultAPI)

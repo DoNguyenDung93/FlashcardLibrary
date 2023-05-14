@@ -12,15 +12,7 @@
 </p>
 
 <p>
-    <ul id="ul_flashcards">
-        @foreach (var card in flashcards)
-        {
-            <li>
-                <input id="input_Checkbox" type="checkbox" @bind="card.IsDeletedBool" />
-                <Multiline Value="@card.DisplayData"/>
-            </li>
-        }
-    </ul>
+    <Multiline Value="@flashcard.DisplayData" />
 </p>
 
 <p>
@@ -28,43 +20,31 @@
 </p>
 @code {
     private string searchTerm = string.Empty;
-    private List<Flashcard>? _flashcards;
-    private List<Flashcard> flashcards
+    private Flashcard? _flashcard;
+    private Flashcard flashcard
     {
         get
         {
-            if (_flashcards != null && _flashcards.Count > 0)
-                return _flashcards;
-            else
-            {
-                var context = new FlashcardContext();
-                {
-                    if (!String.IsNullOrEmpty(searchTerm))
-                        return context.Flashcard.Include(flashcard => flashcard.Attachments).Where(x => x.IsDeleted == GlobalVariable.GlobalNoFlag && x.ObjectName.ToLower() == searchTerm.ToLower()).ToList();
-                    else
-                        return context.Flashcard.Include(flashcard => flashcard.Attachments).Where(x => x.IsDeleted == GlobalVariable.GlobalNoFlag).ToList();
-                }
-            }
+            return _flashcard ?? new ("");
         } 
         set
         {
-            _flashcards = value;
+            _flashcard = value;
         }
     }
 
-    private void btn_Search_OnClick(EventArgs e)
+    private async void btn_Search_OnClick(EventArgs e)
     {
         // call dictionary API to get the JSON result
-        Flashcard flashcard = new(searchTerm);
-        Flashcard.GetFlashCard(true, flashcard, flashcards);
-
-        flashcards.Add(flashcard);
+        Task<Flashcard> getFlashCard = Flashcard.GetFlashCard(true, searchTerm);
+        _flashcard = await getFlashCard;
+        StateHasChanged();
     }
 
     private void btn_Reset_OnClick(EventArgs e)
     {
         searchTerm = string.Empty;
-        _flashcards?.Clear();
+        flashcard = new("");
     }
 
 }
